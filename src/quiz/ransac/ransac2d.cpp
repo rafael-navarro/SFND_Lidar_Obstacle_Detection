@@ -67,18 +67,50 @@ std::unordered_set<int> Ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int ma
 	srand(time(NULL));
 	
 	// TODO: Fill in this function
-
 	// For max iterations 
+	for(int iter = 0; iter < maxIterations; iter++)
+	{
+		std::unordered_set<int> inliers;
 
-	// Randomly sample subset and fit line
+		// Randomly sample subset and fit line
+		int index1 = rand() % (cloud->points.size());
+		int index2 = rand() % (cloud->points.size());
+		
+		float x1 = cloud->points[index1].x;
+		float y1 = cloud->points[index1].y;
+		float x2 = cloud->points[index2].x;
+		float y2 = cloud->points[index2].y;
 
-	// Measure distance between every point and fitted line
-	// If distance is smaller than threshold count it as inlier
-
-	// Return indicies of inliers from fitted line with most inliers
+		float a = y2 - y1;
+		float b = x2 - x1;
+		float c = x1 * y2 - y1 * x2;
 	
-	return inliersResult;
+		// Measure distance between every point and fitted line
+		double divisor = sqrt(a * a + b * b);
 
+		if(divisor == 0)
+			continue;
+
+		for(int index = 0; index < cloud->points.size(); index++)
+		{
+			float x3 = cloud->points[index].x;
+			float y3 = cloud->points[index].y;
+
+			float distance = fabs(a * x3 + b * y3 + c) / divisor;
+
+			// If distance is smaller than threshold count it as inlier
+			if(distance <= distanceTol)
+				inliers.insert(index);
+		}
+		
+		// Return indicies of inliers from fitted line with most inliers
+		if(inliers.size() > inliersResult.size())
+		{
+			inliersResult = inliers;
+		}
+	}
+
+	return inliersResult;
 }
 
 int main ()
@@ -92,7 +124,7 @@ int main ()
 	
 
 	// TODO: Change the max iteration and distance tolerance arguments for Ransac function
-	std::unordered_set<int> inliers = Ransac(cloud, 0, 0);
+	std::unordered_set<int> inliers = Ransac(cloud, 10, 0.5);
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
