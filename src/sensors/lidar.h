@@ -79,7 +79,7 @@ struct Lidar
 	double groundSlope;
 	double minDistance;
 	double maxDistance;
-	double resoultion;
+	double resolution;
 	double sderr;
 
 	Lidar(std::vector<Car> setCars, double setGroundSlope)
@@ -88,7 +88,7 @@ struct Lidar
 		// TODO:: set minDistance to 5 to remove points from roof of ego car
 		minDistance = 5;
 		maxDistance = 50;
-		resoultion = 0.2;
+		resolution = 0.2;
 		// TODO:: set sderr to 0.2 to get more interesting pcd files
 		sderr = 0.2;
 		cars = setCars;
@@ -108,7 +108,7 @@ struct Lidar
 		{
 			for(double angle = 0; angle <= 2*pi; angle+=horizontalAngleInc)
 			{
-				Ray ray(position,angle,angleVertical,resoultion);
+				Ray ray(position,angle,angleVertical,resolution);
 				rays.push_back(ray);
 			}
 		}
