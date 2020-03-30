@@ -29,14 +29,56 @@ struct KdTree
 	{
 		// TODO: Fill in this function to insert a new point into the tree
 		// the function should create a new node and place correctly with in the root 
+		helper_insert(&root, 0, point, id);
+	}
 
+	void helper_insert(Node **node, uint depth, std::vector<float> point, int id)
+	{
+		uint index = depth % point.size();
+		if(*node == NULL)
+		{
+			*node = new Node(point, id);
+		}
+		else if(point[index] < (*node)->point[index])
+		{
+			helper_insert(&(*node)->left, depth+1, point, id);
+		}
+		else
+		{
+			helper_insert(&(*node)->right, depth+1, point, id);
+		}
 	}
 
 	// return a list of point ids in the tree that are within distance of target
 	std::vector<int> search(std::vector<float> target, float distanceTol)
 	{
 		std::vector<int> ids;
+		helper_search(target, root, 0, distanceTol, ids);
 		return ids;
+	}
+
+	void helper_search(std::vector<float> target, Node *node, uint depth, float distanceTol, std::vector<int>& ids)
+	{
+		if(node == NULL) return;
+
+		if(node->point[0] >= (target[0] - distanceTol) && node->point[0] <= (target[0] + distanceTol) && 	
+			node->point[1] >= (target[1] - distanceTol) && node->point[1] <= (target[1] + distanceTol))
+		{
+			float sqr_distance = /*sqrt*/((node->point[0] - target[0]) * (node->point[0] - target[0]) + 
+								(node->point[1] - target[1]) * (node->point[1] - target[1]));
+
+			if(sqr_distance <= distanceTol*distanceTol)
+				ids.push_back(node->id);
+		}
+
+		uint index = depth % 2;
+		if((target[index] - distanceTol) < node->point[index])
+			helper_search(target, node->left, depth+1, distanceTol, ids);
+		if((target[index] + distanceTol) > node->point[index])
+			helper_search(target, node->right, depth+1, distanceTol, ids);
+			
+
+		
 	}
 	
 
