@@ -61,27 +61,35 @@ struct KdTree
 	{
 		if(node == NULL) return;
 
-		if(node->point[0] >= (target[0] - distanceTol) && node->point[0] <= (target[0] + distanceTol) && 	
-			node->point[1] >= (target[1] - distanceTol) && node->point[1] <= (target[1] + distanceTol))
+		bool isNearby = true;
+		for(int i = 0; i < target.size(); i++)
+			isNearby = isNearby &&
+				node->point[i] >= (target[i] - distanceTol) && 
+				node->point[i] <= (target[i] + distanceTol);
+
+		//if(node->point[0] >= (target[0] - distanceTol) && node->point[0] <= (target[0] + distanceTol) && 	
+		//	node->point[1] >= (target[1] - distanceTol) && node->point[1] <= (target[1] + distanceTol))
+		if(isNearby)
 		{
-			float sqr_distance = /*sqrt*/((node->point[0] - target[0]) * (node->point[0] - target[0]) + 
-								(node->point[1] - target[1]) * (node->point[1] - target[1]));
+			// float sqr_distance = /*sqrt*/((node->point[0] - target[0]) * (node->point[0] - target[0]) + 
+			// 					(node->point[1] - target[1]) * (node->point[1] - target[1]));
+
+			float sqr_distance = 0; 
+			for(int i = 0; i < target.size(); i++)
+			{
+				sqr_distance += (node->point[i] - target[i]) * (node->point[i] - target[i]);
+			}
 
 			if(sqr_distance <= distanceTol*distanceTol)
 				ids.push_back(node->id);
 		}
 
-		uint index = depth % 2;
+		uint index = depth % target.size();
 		if((target[index] - distanceTol) < node->point[index])
 			helper_search(target, node->left, depth+1, distanceTol, ids);
 		if((target[index] + distanceTol) > node->point[index])
 			helper_search(target, node->right, depth+1, distanceTol, ids);
-			
-
-		
 	}
-	
-
 };
 
 
