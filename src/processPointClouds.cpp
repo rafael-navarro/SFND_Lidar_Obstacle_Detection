@@ -46,8 +46,6 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
         cloud_obstacles (new pcl::PointCloud<PointT>);
 
     // Create the filtering object
-
-
     //Get points from indexes
     // for(int index : inliers->indices)
     // {
